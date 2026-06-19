@@ -1,0 +1,77 @@
+{
+  "procedure": "Total Knee Arthroplasty, right knee",
+  "mode": "logger",
+  "updated_at": 1718800000.0,
+  "steps": [
+    {
+      "id": "preop_safety",
+      "label": "Pre-op safety and medication review",
+      "aliases": ["allergy", "antibiotic", "medication review"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "timeout",
+      "label": "Surgical timeout and site verification",
+      "aliases": ["timeout", "time out", "site verification"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "position_prep",
+      "label": "Patient positioning and surgical prep",
+      "aliases": ["positioning", "prep", "drape"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "approach_exposure",
+      "label": "Surgical approach and exposure",
+      "aliases": ["approach", "exposure", "arthrotomy"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "femoral_prep",
+      "label": "Femoral preparation and resection",
+      "aliases": ["femoral cut", "femoral resection", "distal femur"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "tibial_prep",
+      "label": "Tibial preparation",
+      "aliases": ["tibial cut", "tibia", "proximal tibia"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "trial_balance",
+      "label": "Implant trialing and balancing",
+      "aliases": ["trial", "trials", "balance"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "implants",
+      "label": "Cement and place implants",
+      "aliases": ["cement", "implants", "components"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "closure",
+      "label": "Closure and dressings",
+      "aliases": ["closure", "hemostasis", "dressings"],
+      "status": "pending",
+      "completed_at": null
+    },
+    {
+      "id": "handoff",
+      "label": "Transfer to PACU and handoff",
+      "aliases": ["pacu", "recovery room", "handoff"],
+      "status": "pending",
+      "completed_at": null
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+# Render blueprint — https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: sage-api
+    runtime: docker
+    dockerfilePath: backend/deploy/Dockerfile.api
+    dockerContext: backend
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHONPATH
+        value: /app
+      - key: CASE_DATA_DIR
+        value: /app/data/cases
+      - key: LLM_PROVIDER
+        value: nebius
+      - key: STORAGE_BACKEND
+        value: insforge
+      - key: CORS_ORIGINS
+        sync: false
+      - key: NEBIUS_API_KEY
+        sync: false
+      - key: NEBIUS_BASE_URL
+        sync: false
+      - key: VAPI_PUBLIC_KEY
+        sync: false
+      - key: VAPI_PRIVATE_KEY
+        sync: false
+      - key: VAPI_OR_ASSISTANT_ID
+        sync: false
+      - key: VAPI_INTRO_ASSISTANT_ID
+        sync: false
+      - key: VAPI_SERVER_URL
+        sync: false
+      - key: INSFORGE_URL
+        sync: false
+      - key: INSFORGE_SERVICE_KEY
+        sync: false
+    disk:
+      name: sage-case-cache
+      mountPath: /app/data
+      sizeGB: 1

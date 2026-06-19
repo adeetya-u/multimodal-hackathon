@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "vapi": {
+      "command": "npx",
+      "args": ["-y", "@vapi-ai/mcp-server"],
+      "envFile": "${workspaceFolder}/.cursor/mcp.env"
+    },
+    "insforge": {
+      "command": "npx",
+      "args": ["-y", "@insforge/mcp@latest"],
+      "envFile": "${workspaceFolder}/.cursor/mcp.env"
+    },
+    "nebius": {
+      "command": "uvx",
+      "args": [
+        "--refresh-package",
+        "nebius-mcp-server",
+        "nebius-mcp-server@git+https://github.com/nebius/mcp-server@main"
+      ],
+      "env": {
+        "SAFE_MODE": "true"
+      }
+    }
+  }
+}

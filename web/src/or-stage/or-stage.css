@@ -1,0 +1,834 @@
+/* ── OR Stage — all new styles scoped to .or-stage-* ───────────
+   Inherits Apple HIG tokens from :root (styles.css).
+   Do not redefine --blue, --orange, --material, etc. here.
+─────────────────────────────────────────────────────────────── */
+
+:root {
+  --or-toolbar-h: 44px;
+  --or-main-ratio: 3;
+  --or-rail-ratio: 2;
+  --or-gap: 0.5rem;
+  --or-pad-x: 0.875rem;
+  --or-pad-y: 0.5rem;
+  --or-stage-max: 100%;
+}
+
+/* ── Page shell ─────────────────────────────────────────────── */
+
+.or-page-v2 {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--system-bg);
+}
+
+.or-page-v2 .or-toolbar {
+  padding: 0.5rem 1rem;
+  padding-top: max(0.5rem, env(safe-area-inset-top));
+  min-height: var(--or-toolbar-h);
+  align-items: center;
+}
+
+.or-page-v2 .or-toolbar-step {
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.or-stage-body {
+  flex: 1 1 auto;
+  display: grid;
+  /* 60 / 40 left-right — literal fr units (var() cannot suffix fr) */
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: var(--or-gap);
+  padding: var(--or-pad-y) var(--or-pad-x);
+  max-width: var(--or-stage-max);
+  margin: 0 auto;
+  width: 100%;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.or-stage-body > .or-stage-center {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.or-stage-body > .or-stage-checklist-rail {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+/* ── Center stage ────────────────────────────────────────────── */
+
+.or-stage-center {
+  display: flex;
+  flex-direction: column;
+  gap: var(--or-gap);
+  min-width: 0;
+  min-height: clamp(420px, 78vh, 100%);
+  height: 100%;
+  overflow: hidden;
+}
+
+.or-voice-stage-wrap {
+  flex: 1 1 auto;
+  display: flex;
+  min-height: clamp(360px, 68vh, 100%);
+  width: 100%;
+}
+
+/* ── Visual wrap (guideline / text card) ─────────────── */
+
+.or-stage-visual-wrap {
+  background: var(--white);
+  border-radius: var(--radius-hero);
+  overflow: hidden;
+  box-shadow:
+    0 0 0 0.33px rgba(255, 149, 0, 0.18),
+    0 8px 32px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  /* Visual takes most of the stage; transcript strip claims its share below */
+  flex: 1 1 auto;
+}
+
+.or-stage-visual-surface {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--system-fill-secondary);
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
+}
+
+/* Document surfaces (guideline / text) hug content but stay scrollable */
+.or-stage-visual-surface--doc {
+  align-items: stretch;
+  background: var(--white);
+  overflow-y: auto;
+}
+
+/* ── Guideline / text card ───────────────────────────────────── */
+
+.or-stage-guideline-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.or-stage-pdf-frame {
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 320px;
+  border: none;
+  background: var(--white);
+}
+
+.or-stage-pdf-fallback {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  text-align: center;
+  color: var(--label-secondary);
+  font-size: 0.9375rem;
+}
+
+.or-stage-guideline-excerpt {
+  padding: clamp(0.75rem, 1.5vw, 1rem) clamp(1rem, 2vw, 1.5rem);
+  border-top: 0.33px solid var(--separator-opaque);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.or-stage-guideline-excerpt p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--label-secondary);
+}
+
+.or-stage-text-card {
+  width: 100%;
+  padding: clamp(1.25rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.or-stage-text-card-body {
+  margin: 0;
+  /* Fluid type — large for short callouts, settles for long passages */
+  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--label);
+  letter-spacing: -0.01em;
+  max-width: 64ch;
+  text-wrap: pretty;
+}
+
+.or-stage-highlight {
+  background: rgba(255, 149, 0, 0.18);
+  color: var(--label);
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+/* ── Caption strip ───────────────────────────────────────────── */
+
+.or-stage-caption-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.625rem clamp(0.875rem, 1.75vw, 1.25rem);
+  border-top: 0.33px solid var(--separator-opaque);
+  background: var(--material-thick);
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  font-size: 0.8125rem;
+  flex-shrink: 0;
+}
+
+.or-stage-caption-source {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--orange);
+  flex-shrink: 0;
+}
+
+.or-stage-confidence {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.or-stage-confidence-bar {
+  display: inline-block;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--green);
+  width: 60px;
+  max-width: 100%;
+  transition: width 0.4s var(--spring);
+}
+
+.or-stage-confidence-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.or-stage-verify-notice {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--label-tertiary);
+  font-style: italic;
+}
+
+/* ── Transcript wrap ─────────────────────────────────────────── */
+
+.or-stage-transcript-wrap.full {
+  flex: 0 1 auto;
+  max-height: var(--or-transcript-max);
+  min-height: 0;
+  background: var(--white);
+  border-radius: var(--radius-card);
+  box-shadow: 0 0 0 0.33px rgba(0, 0, 0, 0.04), 0 2px 10px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.or-stage-transcript-wrap.compact {
+  flex: 0 1 clamp(100px, 18vh, 160px);
+  max-height: clamp(100px, 18vh, 160px);
+  min-height: 80px;
+  background: var(--white);
+  border-radius: var(--radius-card);
+  box-shadow: 0 0 0 0.33px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Transcript stream ───────────────────────────────────────── */
+
+.or-stage-transcript-stream {
+  padding: 0.75rem 0.875rem;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  scroll-behavior: smooth;
+}
+
+.or-stage-transcript-strip {
+  padding: 0.7rem clamp(0.75rem, 1.5vw, 1rem);
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.or-stage-transcript-empty {
+  align-items: center;
+  justify-content: center;
+}
+
+.or-stage-transcript-hint {
+  font-size: 0.875rem;
+  color: var(--label-tertiary);
+}
+
+/* ── Transcript turns ────────────────────────────────────────── */
+
+.or-stage-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-width: min(96%, 48rem);
+}
+
+.or-stage-turn-surgeon {
+  align-self: flex-start;
+}
+
+.or-stage-turn-agent {
+  align-self: flex-end;
+}
+
+.or-stage-turn-role {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--label-tertiary);
+}
+
+.or-stage-turn-surgeon .or-stage-turn-role {
+  color: var(--label-tertiary);
+}
+
+.or-stage-turn-agent .or-stage-turn-role {
+  color: var(--orange);
+}
+
+.or-stage-turn-text {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.45;
+  padding: 0.65rem 0.95rem;
+  border-radius: var(--radius-inset);
+  background: var(--system-fill-secondary);
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.or-stage-transcript-strip .or-stage-turn-text {
+  font-size: 0.9375rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.or-stage-turn-surgeon .or-stage-turn-text {
+  background: rgba(60, 60, 67, 0.06);
+  color: var(--label-secondary);
+  font-weight: 400;
+  font-size: 0.9375rem;
+  border-radius: var(--radius-inset) var(--radius-inset) var(--radius-inset) 4px;
+}
+
+.or-stage-transcript-strip .or-stage-turn-surgeon .or-stage-turn-text {
+  font-size: 0.8125rem;
+}
+
+.or-stage-turn-agent .or-stage-turn-text {
+  background: rgba(255, 149, 0, 0.1);
+  color: var(--label);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  border-radius: var(--radius-inset) var(--radius-inset) 4px var(--radius-inset);
+}
+
+.or-stage-transcript-strip .or-stage-turn-agent .or-stage-turn-text {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.or-stage-turn-interim .or-stage-turn-text {
+  opacity: 0.72;
+  font-style: italic;
+}
+
+.or-stage-turn-interim .or-stage-turn-role {
+  color: var(--label-tertiary);
+}
+
+.or-voice-hero-block--interim .or-voice-hero-text {
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.or-voice-hero-block--interim .or-voice-hero-label {
+  color: var(--label-tertiary);
+}
+
+/* ── Vitals cards (right rail) ───────────────────────────────── */
+
+.or-vitals-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  flex: 0 0 auto;
+}
+
+.or-vitals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.or-vital-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  background: var(--white);
+  border-radius: var(--radius-card);
+  padding: 0.5rem 0.55rem;
+  box-shadow: 0 0 0 0.33px rgba(0, 0, 0, 0.05);
+  border: 0.33px solid rgba(0, 0, 0, 0.04);
+  min-width: 0;
+}
+
+.or-vital-card--hero {
+  gap: 0.3rem;
+  padding: 0.55rem 0.65rem 0.5rem;
+}
+
+.or-vital-card--hero .or-vital-card-reading {
+  align-items: baseline;
+}
+
+.or-vital-card--hero .or-vital-card-value {
+  font-size: 1.375rem;
+}
+
+.or-vital-card-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--label-secondary);
+  line-height: 1.1;
+}
+
+.or-vital-card-reading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  margin: 0;
+  min-width: 0;
+}
+
+.or-vital-card-value {
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+  color: var(--label);
+  line-height: 1;
+}
+
+.or-vital-card--compact .or-vital-card-value {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.or-vital-card-unit {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: var(--label-tertiary);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.or-vital-card--heart .or-vital-card-value {
+  color: #ff2d55;
+}
+
+.or-vital-card--oxygen .or-vital-card-value {
+  color: var(--blue);
+}
+
+.or-vital-card--pressure .or-vital-card-value {
+  color: var(--label);
+}
+
+.or-vital-ecg {
+  display: block;
+  width: 100%;
+  height: 30px;
+  margin-top: 0.15rem;
+}
+
+.or-vital-ecg path {
+  fill: none;
+  stroke: #ff2d55;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ── Voice stage (logger) ──────────────────────────────────── */
+
+.or-voice-stage {
+  display: grid;
+  grid-template-rows: minmax(2.5rem, auto) minmax(360px, 1fr);
+  align-items: stretch;
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  gap: clamp(0.5rem, 1.25vh, 1rem);
+  padding: clamp(0.5rem, 1.25vw, 1rem) clamp(0.75rem, 2.5vw, 2rem);
+  width: 100%;
+  overflow: hidden;
+}
+
+.or-voice-viz-zone {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  min-height: 2.5rem;
+  padding: 0.125rem 0;
+}
+
+.or-voice-listening-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: rgba(0, 122, 255, 0.08);
+  border-radius: 999px;
+  padding: 0.25rem 0.625rem;
+}
+
+.or-voice-transcript-panel,
+.or-voice-ready-hint,
+.or-voice-citation-bar {
+  display: none;
+}
+
+.or-voice-viz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.or-voice-viz-bars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.4rem, 1vw, 0.75rem);
+  height: clamp(2.75rem, 8vh, 4rem);
+}
+
+.or-voice-viz-bar {
+  display: block;
+  width: clamp(7px, 1.1vw, 12px);
+  min-height: 0.35rem;
+  height: calc(0.4rem + var(--bar-h, 0.25) * clamp(2rem, 6vh, 3.25rem));
+  border-radius: 999px;
+  background: var(--blue);
+  opacity: 0.42;
+  transform-origin: center center;
+  transition: height 100ms ease-out, opacity 110ms ease-out;
+  box-shadow: 0 0 calc(var(--bar-h, 0.2) * 4px) rgba(0, 122, 255, 0.16);
+}
+
+.or-voice-viz--active .or-voice-viz-bar {
+  opacity: calc(0.52 + var(--bar-h, 0.25) * 0.4);
+}
+
+/* Hero transcript — below compact visualizer */
+.or-voice-hero {
+  flex: 1 1 auto;
+  min-height: clamp(360px, 58vh, 720px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  width: 100%;
+  max-width: min(56rem, 100%);
+  margin: 0 auto;
+  gap: clamp(1rem, 2.5vh, 2rem);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: clamp(0.5rem, 1.5vh, 1.25rem) 0.75rem 1.5rem;
+  -webkit-overflow-scrolling: touch;
+}
+
+.or-voice-hero--active {
+  justify-content: flex-start;
+}
+
+.or-voice-hero-idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  text-align: center;
+}
+
+.or-voice-idle-logo {
+  opacity: 0.92;
+}
+
+.or-voice-hero-empty {
+  margin: 0;
+  font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--label-tertiary);
+}
+
+.or-voice-hero-block {
+  width: 100%;
+}
+
+.or-voice-hero-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--label-tertiary);
+}
+
+.or-voice-hero-block--you .or-voice-hero-label {
+  color: var(--label-tertiary);
+}
+
+.or-voice-hero-block--agent .or-voice-hero-label {
+  color: var(--orange);
+}
+
+.or-voice-hero-text {
+  margin: 0;
+  font-size: clamp(1.125rem, 2.8vw, 1.625rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  color: var(--label-secondary);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.or-voice-hero-block--you .or-voice-hero-text {
+  color: var(--label-secondary);
+}
+
+.or-voice-hero-text--agent {
+  font-size: clamp(1.375rem, 4.5vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+  color: var(--label);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.or-voice-hero-text--agent.or-voice-hero-text--long {
+  font-size: clamp(1.0625rem, 2.8vw, 1.5rem);
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+.or-voice-hero-searching {
+  margin: 0;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--label-tertiary);
+  animation: or-search-pulse 1.4s ease-in-out infinite;
+}
+
+.or-voice-hero-block--searching .or-voice-hero-label {
+  color: var(--orange);
+}
+
+.or-voice-hero-block--speaking .or-voice-hero-text--agent {
+  animation: or-search-pulse 1.6s ease-in-out infinite;
+}
+
+.or-stage-spoken-answer {
+  margin: 0.75rem 1rem 0;
+  padding: 0.75rem 1rem;
+  font-size: clamp(1rem, 2.4vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  color: var(--label);
+  background: var(--fill-tertiary);
+  border-radius: 12px;
+}
+
+.or-stage-caption-spoken {
+  flex: 1 1 100%;
+  width: 100%;
+  margin: 0 0 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--label);
+}
+
+.or-voice-hero-citation {
+  margin: 0.625rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--label-tertiary);
+}
+
+@keyframes or-search-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── Checklist rail ──────────────────────────────────────────── */
+
+.or-stage-checklist-rail {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.or-stage-checklist-rail .or-checklist-card {
+  padding: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1 1 auto;
+  border-radius: var(--radius-card);
+}
+
+.or-stage-checklist-rail .or-checklist-header {
+  margin-bottom: 0.625rem;
+  gap: 0.75rem;
+}
+
+.or-stage-checklist-rail .or-procedure-title {
+  font-size: 1rem;
+}
+
+.or-stage-checklist-rail .activity-ring {
+  width: 52px;
+  height: 52px;
+}
+
+.or-stage-checklist-rail .activity-ring-inner {
+  width: 40px;
+  height: 40px;
+}
+
+.or-stage-checklist-rail .activity-ring-value {
+  font-size: 1rem;
+}
+
+.or-stage-checklist-rail .or-checklist-steps {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.or-stage-checklist-rail .checklist-row {
+  align-items: flex-start;
+}
+
+.or-stage-checklist-rail .checklist-row .row-title {
+  font-size: 0.875rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
+
+.or-stage-checklist-rail .checklist-row .row-marker {
+  margin-top: 0.1rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+
+.or-stage-center,
+.or-stage-checklist-rail {
+  height: 100%;
+  min-height: 0;
+}
+
+@media (max-width: 860px) {
+  .or-stage-body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
+  }
+
+  .or-stage-body > .or-stage-center {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .or-stage-body > .or-stage-checklist-rail {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .or-stage-transcript-wrap.compact {
+    flex-basis: clamp(120px, 28vh, 200px);
+  }
+
+  .or-stage-verify-notice {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .or-stage-confidence-bar {
+    transition: none;
+  }
+
+  .or-voice-viz-bar {
+    transition: none;
+  }
+}
