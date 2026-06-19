@@ -1,10 +1,11 @@
 # Scalpel
 
+**Live demo:** [https://76ck2nr5.insforge.site/](https://76ck2nr5.insforge.site/)
+
 **Scalpel** is a voice-first surgical assistant for the full case lifecycle: prep the chart, run the OR with hands-free logging and Q&A, then close with a structured post-op summary.
 
 Built for the **Multimodal AI Hackathon** using [Nebius Token Factory](https://tokenfactory.nebius.com), [Vapi](https://vapi.ai), and [InsForge](https://insforge.dev).
 
-**Live demo:** [https://76ck2nr5.insforge.site](https://76ck2nr5.insforge.site)  
 **API:** [https://scalpel-api-0c8bb94f-a76e-44c2-968d-915d66581c6b.fly.dev/api/health](https://scalpel-api-0c8bb94f-a76e-44c2-968d-915d66581c6b.fly.dev/api/health)
 
 ---
