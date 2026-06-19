@@ -5,11 +5,13 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import time
 from typing import Any
 
 from .checklist import ChecklistState, load_case_checklist, merge_checklist_progress
 from .bootstrap import load_case_context
+from .chart_extract import try_chart_fact_answer
 from .clinical_guard import guard_spoken_against_chart
 from .search import (
     KnowledgeSearch,
@@ -202,7 +204,14 @@ async def _run_answer_pipeline(
     ctx = load_case_context(case_id)
     voice_events.publish(case_id, "agent-status", {"status": "searching", "ts": time.time()})
 
+    chart_spoken = try_chart_fact_answer(query, ctx)
+    if chart_spoken:
+        voice_events.publish(case_id, "agent-status", {"status": "idle", "ts": time.time()})
+        return _guard_spoken(case_id, chart_spoken)
+
     search_query = expand_retrieval_query(state, query, segment or query)
+    if re.search(r"\bmedications?\b|\bmeds\b|\bhome meds\b", query, re.I):
+        search_query = f"{search_query} medications pre-admission home medications"
     patient_hits = await knowledge.search(search_query, k=6, prefer_patient=True)
     if prefer_sop and ctx:
         ref_hits = await knowledge.search(

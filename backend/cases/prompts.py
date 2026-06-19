@@ -85,15 +85,20 @@ CANDIDATES (chunk_id | SOURCE | TYPE | DATE | text):
 
 def build_intro_answer_prompt(*, question: str, reference_excerpts: str) -> str:
     return f"""Voice assistant on a public knee surgery education demo. No patient chart — general reference only.
-Answer using ONLY the reference excerpts below. Medically succinct: 1-2 spoken lines for TTS.
+Answer using ONLY the reference excerpts below.
+
+Rules:
+- Reply in ONE short spoken sentence (max ~22 words). Use a second sentence only if absolutely necessary.
+- Never preamble, never "I'm here to walk you through", never bullet lists.
+- Plain speech for TTS only.
 
 If no excerpt answers the question, output:
   GROUNDED: NONE
-then one spoken sentence with general guidance and suggest continuing to prep for patient-specific answers.
+then one short sentence of general guidance.
 
 Otherwise:
   GROUNDED: [<chunk_id>]
-then 1-2 spoken lines maximum.
+then your one (or at most two) short spoken sentences.
 
 QUESTION:
 {question}
@@ -137,6 +142,7 @@ def build_nova_fallback_prompt(
 Answer using ONLY the live case context and local hints below.
 Use the OR dialogue in LIVE CASE CONTEXT to resolve follow-ups and pronouns.
 Never invent allergies or claim NKDA unless explicitly in the context above.
+If LIVE CASE CONTEXT lists medications, allergies, labs, or other facts, state them — do not reply MISSING.
 {procedure_line}{live_section}{hints_section}
 Rules:
 - Reply with 1-2 short spoken lines for TTS. Plain speech only — no markdown or bullet lists.

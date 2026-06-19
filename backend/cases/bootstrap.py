@@ -129,16 +129,8 @@ def load_case_context(case_id: str | None) -> SurgeryContext:
 
 
 def _format_context(raw: dict) -> str:
-    nested = raw.get("context_window")
-    if isinstance(nested, dict):
-        block = nested.get("prompt_block", "")
-        if isinstance(block, str) and block.strip():
-            base = block.strip()
-        else:
-            base = ""
-    else:
-        base = ""
     parts: list[str] = []
+    base = _context_prompt_block(raw)
     if base:
         parts.append(base)
     for key in ("patient_id", "procedure", "comorbidities", "notes"):
@@ -147,9 +139,46 @@ def _format_context(raw: dict) -> str:
     allergy_line = _allergies_highlight(raw)
     if allergy_line:
         parts.append(f"- allergies: {allergy_line}")
-    for pack in raw.get("compact_packs", [])[:5]:
-        parts.append(f"- {pack.get('title', 'context')}: {pack.get('summary', '')[:200]}")
+    med_line = _medications_highlight(raw)
+    if med_line:
+        parts.append(f"- medications: {med_line}")
+    seen_titles: set[str] = set()
+    for pack in raw.get("compact_packs", [])[:8]:
+        if not isinstance(pack, dict):
+            continue
+        title = str(pack.get("title") or "context")
+        if title in seen_titles:
+            continue
+        seen_titles.add(title)
+        limit = 400 if re.search(r"medication", title, re.I) else 200
+        parts.append(f"- {title}: {str(pack.get('summary', ''))[:limit]}")
     return "\n".join(parts) if parts else "No patient context loaded."
+
+
+def _context_prompt_block(raw: dict) -> str:
+    nested = raw.get("context_window")
+    if isinstance(nested, dict):
+        block = nested.get("prompt_block", "")
+        if isinstance(block, str) and block.strip():
+            return block.strip()
+    return ""
+
+
+def _medications_highlight(raw: dict) -> str | None:
+    from .chart_extract import extract_medications_spoken
+
+    ctx = SurgeryContext(
+        patient_id=str(raw.get("patient_id", "UNKNOWN")),
+        procedure=str(raw.get("procedure", "Unknown")),
+        summary=_context_prompt_block(raw)
+        or " ".join(
+            str(pack.get("summary") or "")[:300]
+            for pack in raw.get("compact_packs", [])[:6]
+            if isinstance(pack, dict)
+        ),
+        raw=raw,
+    )
+    return extract_medications_spoken(ctx)
 
 
 def _allergies_highlight(raw: dict) -> str | None:

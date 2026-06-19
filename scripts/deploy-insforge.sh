@@ -53,7 +53,7 @@ fi
 echo "==> Deploying FastAPI to Insforge compute (scalpel-api)…"
 export PATH="${HOME}/.fly/bin:${PATH}"
 PROD_ENV="$ROOT/backend/.env.insforge-deploy"
-grep -E '^(LLM_PROVIDER|MINIMAX_|NEBIUS_|VAPI_|INSFORGE_|STORAGE_BACKEND|CORS_ORIGINS|HIPAA_MODE|PORT)=' "$BACKEND_ENV" >"$PROD_ENV" || true
+grep -E '^(LLM_PROVIDER|STORAGE_BACKEND|CORS_ORIGINS|HIPAA_MODE|PORT|MINIMAX_[A-Za-z0-9_]+|NEBIUS_[A-Za-z0-9_]+|VAPI_[A-Za-z0-9_]+|INSFORGE_[A-Za-z0-9_]+|SCALPEL_[A-Za-z0-9_]+)=' "$BACKEND_ENV" >"$PROD_ENV" || true
 {
   echo "STORAGE_BACKEND=insforge"
   echo "HIPAA_MODE=true"

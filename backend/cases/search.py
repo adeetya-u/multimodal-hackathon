@@ -127,8 +127,9 @@ def load_case_knowledge(case_id: str | None) -> KnowledgeSearch:
 
 def load_demo_reference_knowledge() -> KnowledgeSearch:
     """Reference knee corpus for landing demo — no patient chart."""
-    repo_root = Path(__file__).resolve().parents[1]
-    path = repo_root / "assets" / "reference" / "knee_corpus_compact.json"
+    from shared.bootstrap import BACKEND_ROOT
+
+    path = BACKEND_ROOT / "assets" / "reference" / "knee_corpus_compact.json"
     if not path.exists():
         return KnowledgeSearch([], index_name="knee-reference")
     raw = json.loads(path.read_text(encoding="utf-8"))

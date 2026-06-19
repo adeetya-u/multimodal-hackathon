@@ -9,6 +9,7 @@ import {
   speakViaVapi,
   startVapiCall,
   stopVapiCall,
+  getActiveVapiCaseId,
   formatVapiError,
 } from "./vapiSession";
 import { parseVapiTranscriptMessage, normalizeTranscriptText } from "../utils/vapiTranscript";
@@ -19,7 +20,24 @@ import {
 } from "../utils/transcriptTurns";
 
 const introAssistantId = import.meta.env.VITE_VAPI_INTRO_ASSISTANT_ID as string | undefined;
-const UTTERANCE_DEBOUNCE_MS = 850;
+const UTTERANCE_DEBOUNCE_MS = 500;
+const AGENT_PENDING_ID = "agent-pending";
+const WELCOME_TURN_ID = "agent-welcome";
+const DEFAULT_INTRO_WELCOME = "Hi, I'm Scalpel. Ask anything about knee surgery!";
+
+function introWelcomeMessage(overrides?: Record<string, unknown>): string {
+  const raw = overrides?.firstMessage;
+  return typeof raw === "string" && raw.trim() ? raw.trim() : DEFAULT_INTRO_WELCOME;
+}
+
+function withWelcomeTurn(turns: IntroTurn[], welcome: string): IntroTurn[] {
+  return upsertTranscriptTurn(turns, {
+    id: WELCOME_TURN_ID,
+    role: "agent",
+    text: welcome,
+    ts: Date.now() / 1000,
+  });
+}
 
 export type IntroConnection = "idle" | "connecting" | "connected" | "error";
 
@@ -31,6 +49,30 @@ const READY_PREFETCH = {
   credentials: null,
   error: null as string | null,
 };
+
+function withoutAgentPending(turns: IntroTurn[]): IntroTurn[] {
+  return turns.filter((t) => t.id !== AGENT_PENDING_ID);
+}
+
+function speakIntroAnswer(spoken: string): void {
+  if (speakViaVapi(spoken, { interruptAssistant: true, force: true })) {
+    return;
+  }
+  window.setTimeout(() => {
+    speakViaVapi(spoken, { interruptAssistant: true, force: true });
+  }, 400);
+}
+
+function withAgentPending(turns: IntroTurn[]): IntroTurn[] {
+  const base = withoutAgentPending(turns);
+  return upsertTranscriptTurn(base, {
+    id: AGENT_PENDING_ID,
+    role: "agent",
+    text: "…",
+    ts: Date.now() / 1000,
+    interim: true,
+  });
+}
 
 export function useVapiIntroRoom() {
   const [connection, setConnection] = useState<IntroConnection>("idle");
@@ -54,6 +96,15 @@ export function useVapiIntroRoom() {
         introOverridesRef.current = data.assistantOverrides;
       })
       .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (utteranceTimerRef.current) clearTimeout(utteranceTimerRef.current);
+      if (getActiveVapiCaseId() === "intro") {
+        void stopVapiCall();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -100,6 +151,7 @@ export function useVapiIntroRoom() {
                 if (lastPostedUtteranceRef.current === norm) return;
                 lastPostedUtteranceRef.current = norm;
                 setAgentActivity("searching");
+                setTranscript((t) => withAgentPending(t));
                 void apiFetch("/api/intro/utterance", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
@@ -110,6 +162,7 @@ export function useVapiIntroRoom() {
                       lastPostedUtteranceRef.current = "";
                       const detail = await res.text().catch(() => "");
                       setError(detail || "Could not process question");
+                      setTranscript((t) => withoutAgentPending(t));
                       return;
                     }
                     const data = (await res.json()) as { spoken?: string };
@@ -121,20 +174,26 @@ export function useVapiIntroRoom() {
                         text: spoken,
                         ts: Date.now() / 1000,
                       };
-                      setTranscript((t) => upsertTranscriptTurn(t, agentTurn));
+                      setTranscript((t) =>
+                        upsertTranscriptTurn(withoutAgentPending(t), agentTurn),
+                      );
                       if (/prep|upload|case/i.test(spoken)) {
                         setWantsPrep(true);
                       }
-                      if (speakViaVapi(spoken)) {
-                        setAgentActivity("speaking");
-                      }
+                      speakIntroAnswer(spoken);
+                      setAgentActivity("speaking");
+                    } else {
+                      setTranscript((t) => withoutAgentPending(t));
                     }
                   })
                   .catch(() => {
                     lastPostedUtteranceRef.current = "";
                     setError("Network error processing speech");
+                    setTranscript((t) => withoutAgentPending(t));
                   })
-                  .finally(() => setAgentActivity("idle"));
+                  .finally(() =>
+                    setAgentActivity((prev) => (prev === "searching" ? "idle" : prev)),
+                  );
               }, UTTERANCE_DEBOUNCE_MS);
             }
           }
@@ -171,10 +230,12 @@ export function useVapiIntroRoom() {
           introOverridesRef.current = overrides;
         }
       }
+      const welcome = introWelcomeMessage(overrides);
       await startVapiCall("intro", introAssistantId, {
         muted: false,
         assistantOverrides: overrides,
       });
+      setTranscript(withWelcomeTurn([], welcome));
       setConnection("connected");
       setAgentConnected(true);
       setMicActive(true);

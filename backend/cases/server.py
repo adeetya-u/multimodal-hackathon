@@ -606,7 +606,14 @@ async def create_token(body: TokenRequest) -> TokenResponse:
 @app.post("/api/intro/warmup")
 async def intro_warmup(fresh: bool = False) -> dict:
     """Prep intro assistant — Vapi config for landing demo."""
+    import asyncio
+
+    from .intro_voice import warm_intro_demo
+    from .llm import warm_llm_client
     from .voice import intro_assistant_id, intro_assistant_overrides, public_key
+
+    await warm_intro_demo()
+    await asyncio.to_thread(warm_llm_client)
 
     return {
         "ok": True,

@@ -15,10 +15,10 @@ from .case_intake_extract import extract_case_intake_from_text
 from .checklist_gen import generate_checklist
 from .store import CaseStore, IngestionStage
 from .types import CompactPack, Snippet
+from shared.bootstrap import BACKEND_ROOT
 
 logger = logging.getLogger(__name__)
 
-_REPO_ROOT = Path(__file__).resolve().parents[2]
 _MAX_REFERENCE_PACKS = int(os.environ.get("KNEE_REFERENCE_PACK_LIMIT", "40"))
 
 
@@ -282,14 +282,14 @@ def _knee_corpus_cache_path() -> Path:
     configured = os.environ.get("KNEE_CORPUS_CACHE", "").strip()
     if configured:
         return Path(configured)
-    return _REPO_ROOT / "backend" / "assets" / "reference" / "knee_corpus_compact.json"
+    return BACKEND_ROOT / "assets" / "reference" / "knee_corpus_compact.json"
 
 
 def _knee_chapters_dir() -> Path:
     configured = os.environ.get("KNEE_CHAPTERS_DIR", "").strip()
     if configured:
         return Path(configured)
-    return _REPO_ROOT / "backend" / "assets" / "reference" / "knee_chapters"
+    return BACKEND_ROOT / "assets" / "reference" / "knee_chapters"
 
 
 def _reference_relevance(pack: CompactPack, procedure: str) -> float:

@@ -325,16 +325,20 @@ export function getActiveVapiSessionId(): string | null {
 let lastSpokenNorm = "";
 
 /** Speak a grounded answer through the active Vapi call (deduped). */
-export function speakViaVapi(message: string): boolean {
+export function speakViaVapi(
+  message: string,
+  opts: { interruptAssistant?: boolean; force?: boolean } = {},
+): boolean {
   const text = message.trim();
   if (!text) return false;
   if (/^(noted\.?|checking\.?|one moment\.?|got it\.?)$/i.test(text)) return false;
   const norm = text.toLowerCase().replace(/\s+/g, " ");
-  if (lastSpokenNorm === norm) return false;
+  if (!opts.force && lastSpokenNorm === norm) return false;
   const client = getVapiClient();
   if (!client?.getDailyCallObject()) return false;
   try {
-    client.say(text, false, false, true);
+    const interrupt = opts.interruptAssistant ?? true;
+    client.say(text, false, false, interrupt);
     lastSpokenNorm = norm;
     return true;
   } catch {

@@ -529,6 +529,19 @@
   border-bottom-left-radius: 4px;
 }
 
+.hero-demo-bubble.interim {
+  opacity: 0.72;
+}
+
+.hero-demo-bubble.surgeon.interim {
+  background: color-mix(in srgb, var(--blue) 82%, transparent);
+}
+
+.hero-demo-bubble.agent.interim {
+  font-style: italic;
+  color: var(--secondary-label);
+}
+
 .hero-demo-end {
   align-self: center;
   padding: 0.35rem 0.85rem;

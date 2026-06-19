@@ -107,7 +107,7 @@ print(json.dumps({
     "acknowledgementPhrases": ["okay", "right", "uh-huh", "yeah", "mm-hmm", "got it", "noted"],
   },
   "firstMessage": (
-    "Hi — I'm Scalpel. Ask anything about knee surgery, or continue to prep for a full case."
+    "Hi, I'm Scalpel. Ask anything about knee surgery!"
   ),
   "model": {
     "provider": "openai",

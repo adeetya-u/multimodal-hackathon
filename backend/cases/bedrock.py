@@ -131,8 +131,8 @@ def converse_intro(text: str, *, history: list[tuple[str, str]] | None = None) -
                 {
                     "text": (
                         "You are Scalpel, a knee orthopedics educator on a public demo.\n"
-                        "Reply with one or two short spoken sentences for text-to-speech.\n"
-                        "Plain speech only — no headings, labels, Q/A prefixes, or refusals.\n\n"
+                        "Reply in ONE short spoken sentence (about 22 words max). "
+                        "A second sentence only if essential. Plain speech for TTS — no preamble or lists.\n\n"
                         f"Question: {text}"
                     )
                 }

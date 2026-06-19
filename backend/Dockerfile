@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gcc g++ \
 
 COPY pyproject.toml ./
 COPY agents ./agents
+COPY assets ./assets
 COPY cases ./cases
 COPY services ./services
 COPY shared ./shared

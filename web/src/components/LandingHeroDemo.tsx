@@ -70,8 +70,15 @@ export function LandingHeroDemo() {
 
   const idle = room.connection === "idle" || room.connection === "error";
   const live = room.connection === "connected" && room.agentConnected;
-  const visibleTurns = room.transcript.filter((t) => t.text.trim().length > 0 && !t.interim);
-  const inConversation = visibleTurns.length > 0;
+  const displayTurns = room.transcript.filter((t) => t.text.trim().length > 0);
+  const hasUserSpeech = displayTurns.some((t) => t.role === "surgeon");
+  const hasTranscript = displayTurns.length > 0;
+  const inConversation =
+    live &&
+    (hasTranscript ||
+      hasUserSpeech ||
+      room.agentActivity === "searching" ||
+      room.agentActivity === "speaking");
 
   return (
     <div className="hero-demo-wrap">
@@ -138,7 +145,7 @@ export function LandingHeroDemo() {
           ) : (
             <>
               <div className="hero-demo-transcript" ref={scrollRef}>
-                {visibleTurns.length === 0 ? (
+                {displayTurns.length === 0 ? (
                   <div className="hero-demo-waiting">
                     <p className="hero-demo-transcript-hint">
                       {room.agentConnected
@@ -155,8 +162,11 @@ export function LandingHeroDemo() {
                     )}
                   </div>
                 ) : (
-                  visibleTurns.map((turn) => (
-                    <div key={turn.id} className={`hero-demo-bubble ${turn.role}`}>
+                  displayTurns.map((turn) => (
+                    <div
+                      key={turn.id}
+                      className={`hero-demo-bubble ${turn.role}${turn.interim ? " interim" : ""}`}
+                    >
                       {turn.text}
                     </div>
                   ))

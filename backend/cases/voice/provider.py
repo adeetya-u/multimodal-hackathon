@@ -146,17 +146,16 @@ def _intro_system_prompt() -> str:
     return (
         "You are Scalpel on the public knee surgery demo. There is NO patient chart.\n\n"
         "Rules:\n"
-        "- For greetings or meta questions (what can you do, hello), reply in one short sentence. "
-        "Mention they can ask general knee surgery questions or continue to prep for a full case.\n"
-        "- For ANY clinical or medical question, respond ONLY with "
-        '"Let me look that up." — never answer clinically yourself; the app delivers the answer.\n'
-        '- Never say "Checking.", "One moment.", or ask for patient ID or chart upload.\n'
+        "- For greetings or meta questions (what can you do, hello), reply in one short sentence.\n"
+        "- For ANY clinical or medical question, produce NO spoken reply — stay silent. "
+        "The app fetches and speaks the answer.\n"
+        '- Never say "Checking.", "One moment.", "Let me look that up.", or ask for patient ID.\n'
         "- Do not invent clinical facts."
     )
 
 
 def _intro_first_message() -> str:
-    return "Hi — I'm Scalpel. Ask anything about knee surgery, or continue to prep for a full case."
+    return "Hi, I'm Scalpel. Ask anything about knee surgery!"
 
 
 def intro_assistant_overrides() -> dict[str, Any]:

@@ -150,13 +150,21 @@ def converse_text(
         return None
 
 
-def converse_intro(text: str, *, history: list[tuple[str, str]] | None = None) -> str | None:
+def converse_intro(
+    text: str,
+    *,
+    history: list[tuple[str, str]] | None = None,
+    reference_excerpts: str | None = None,
+) -> str | None:
     if llm_provider() == "bedrock":
         from .bedrock import converse_intro as bedrock_intro
 
         return bedrock_intro(text, history=history)
 
     model = resolve_model("intro") or INTRO_DEFAULT_MODEL
+    excerpt_block = ""
+    if reference_excerpts and reference_excerpts.strip():
+        excerpt_block = f"\n\nUse these reference excerpts when helpful:\n{reference_excerpts.strip()}"
     messages: list[dict] = [
         {
             "role": "user",
@@ -164,9 +172,9 @@ def converse_intro(text: str, *, history: list[tuple[str, str]] | None = None) -
                 {
                     "text": (
                         "You are Scalpel, a knee orthopedics educator on a public demo.\n"
-                        "Reply with one or two short spoken sentences for text-to-speech.\n"
-                        "Plain speech only — no headings, labels, Q/A prefixes, or refusals.\n\n"
-                        f"Question: {text}"
+                        "Reply in ONE short spoken sentence (about 22 words max). "
+                        "A second sentence only if essential. Plain speech for TTS — no preamble or lists.\n\n"
+                        f"Question: {text}{excerpt_block}"
                     )
                 }
             ],
@@ -178,7 +186,7 @@ def converse_intro(text: str, *, history: list[tuple[str, str]] | None = None) -
             -1,
             {"role": tag, "content": [{"text": msg[:120]}]},
         )
-    response = converse(messages, model=model, max_tokens=80, temperature=0.1)
+    response = converse(messages, model=model, max_tokens=55, temperature=0.1)
     if not response:
         return None
     spoken = extract_message_text(response.get("output", {}).get("message", {}))
